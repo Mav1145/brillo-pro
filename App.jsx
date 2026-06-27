@@ -1,5 +1,5 @@
 import brilloLogo from './logo.png'
-import brilloHeader from './header.png'
+import brilloHeader from './Header.png'
 import React, { useState, useEffect, useRef } from "react";
 
 // ─── BRILLO PRO SERVICE LISTS ───────────────────────────────────────────────
