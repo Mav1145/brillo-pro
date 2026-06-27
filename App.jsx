@@ -1,3 +1,4 @@
+import brilloLogo from './logo.png'
 import React, { useState, useEffect, useRef } from "react";
 
 // ─── BRILLO PRO SERVICE LISTS ───────────────────────────────────────────────
@@ -559,7 +560,7 @@ function AccessGate({ onUnlock, t }) {
       <div style={{ background:C.white, borderRadius:20, padding:36, maxWidth:380, width:"100%", textAlign:"center", boxShadow:"0 8px 40px rgba(14,165,233,0.2)", borderTop:`4px solid ${C.blue}` }}>
         {/* Logo area */}
         <div style={{ marginBottom:20 }}>
-          <img src="./logo.png" alt="BrilloPro" style={{ width:160, marginBottom:8 }} />
+          <img src={brilloLogo} alt="BrilloPro" style={{ width:160, marginBottom:8 }} />
         </div>
         <div style={{ fontSize:15, fontWeight:700, color:C.text, marginBottom:8 }}>{t.access.title}</div>
         <div style={{ fontSize:13, color:C.grayDark, marginBottom:16 }}>{t.access.subtitle}</div>
