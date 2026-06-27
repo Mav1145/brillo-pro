@@ -559,7 +559,7 @@ function AccessGate({ onUnlock, t }) {
       <div style={{ background:C.white, borderRadius:20, padding:36, maxWidth:380, width:"100%", textAlign:"center", boxShadow:"0 8px 40px rgba(14,165,233,0.2)", borderTop:`4px solid ${C.blue}` }}>
         {/* Logo area */}
         <div style={{ marginBottom:20 }}>
-          <img src="/logo.png" alt="BrilloPro" style={{ width:160, marginBottom:8 }} />
+          <img src="./logo.png" alt="BrilloPro" style={{ width:160, marginBottom:8 }} />
         </div>
         <div style={{ fontSize:15, fontWeight:700, color:C.text, marginBottom:8 }}>{t.access.title}</div>
         <div style={{ fontSize:13, color:C.grayDark, marginBottom:16 }}>{t.access.subtitle}</div>
@@ -1220,7 +1220,7 @@ export default function App() {
     <div style={{ maxWidth:1100, margin:"0 auto", minHeight:"100vh", background:C.gray, fontFamily:"-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif", paddingBottom:80 }}>
       {/* Header */}
       <div style={{ background:C.black, position:"sticky", top:0, zIndex:10, borderBottom:`3px solid ${C.blue}` }}>
-        <img src="/header.png" alt="BrilloPro" style={{ width:"100%", height:"auto", display:"block" }} />
+        <img src="./header.png" alt="BrilloPro" style={{ width:"100%", height:"auto", display:"block" }} />
         <div style={{ background:C.black, padding:"6px 12px", display:"flex", justifyContent:"flex-end", alignItems:"center" }}>
           <button onClick={() => setLang(lang==="en"?"es":"en")} style={{ background:"rgba(14,165,233,0.2)", color:C.white, border:`1px solid ${C.blue}`, borderRadius:20, padding:"5px 14px", fontWeight:700, cursor:"pointer", fontSize:12 }}>{t.lang}</button>
         </div>
