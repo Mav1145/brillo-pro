@@ -1,4 +1,5 @@
 import brilloLogo from './logo.png'
+import brilloHeader from './header.png'
 import React, { useState, useEffect, useRef } from "react";
 
 // ─── BRILLO PRO SERVICE LISTS ───────────────────────────────────────────────
@@ -111,7 +112,6 @@ const TRANSLATIONS = {
       importSuccess: "clients imported!",
       importError: "Could not read this file. Make sure it's a CSV file.",
       schedHelp: "Schedule: weekly, biweeklyA, biweeklyB, or oneTime. Days: comma-separated like Mon,Wed,Fri",
-      // BrilloPro-specific fields
       access: "Entry Access",
       accessTypes: ["Key", "Lockbox", "Client Present", "Door Code"],
       lockboxCode: "Lockbox Code (PIN-protected)",
@@ -180,6 +180,11 @@ const TRANSLATIONS = {
       lastMonth: "Last Month",
       export: "📊 Export Invoices to CSV",
       exportEstimates: "📋 Export Estimates to CSV",
+      backup: "💾 Backup All Data",
+      restore: "📂 Restore from Backup",
+      backupSuccess: "✓ Backup downloaded!",
+      restoreSuccess: "✓ Data restored successfully!",
+      restoreError: "Could not read backup file. Make sure it's a valid BrilloPro backup.",
       plan: "Current Plan",
       monthly: "$24.99/month",
       annual: "$199/year",
@@ -348,6 +353,11 @@ const TRANSLATIONS = {
       lastMonth: "Mes Pasado",
       export: "📊 Exportar Facturas a CSV",
       exportEstimates: "📋 Exportar Estimados a CSV",
+      backup: "💾 Respaldar Todos los Datos",
+      restore: "📂 Restaurar desde Respaldo",
+      backupSuccess: "✓ ¡Respaldo descargado!",
+      restoreSuccess: "✓ ¡Datos restaurados exitosamente!",
+      restoreError: "No se pudo leer el archivo. Asegúrate que sea un respaldo válido de BrilloPro.",
       plan: "Plan Actual",
       monthly: "$24.99/mes",
       annual: "$199/año",
@@ -558,7 +568,6 @@ function AccessGate({ onUnlock, t }) {
   return (
     <div style={{ minHeight:"100vh", background:C.black, display:"flex", flexDirection:"column", alignItems:"center", justifyContent:"center", padding:24 }}>
       <div style={{ background:C.white, borderRadius:20, padding:36, maxWidth:380, width:"100%", textAlign:"center", boxShadow:"0 8px 40px rgba(14,165,233,0.2)", borderTop:`4px solid ${C.blue}` }}>
-        {/* Logo area */}
         <div style={{ marginBottom:20 }}>
           <img src={brilloLogo} alt="BrilloPro" style={{ width:240, marginBottom:8 }} />
         </div>
@@ -590,7 +599,7 @@ function SetupScreen({ onComplete, t, lang, setLang }) {
       </div>
       <div style={{ background:C.white, borderRadius:16, padding:28, maxWidth:420, width:"100%", boxShadow:"0 8px 32px rgba(14,165,233,0.15)", borderTop:`4px solid ${C.blue}`, marginBottom:30 }}>
         <div style={{ textAlign:"center", marginBottom:20 }}>
-          <img src="/logo.png" alt="BrilloPro" style={{ width:130, marginBottom:10 }} />
+          <img src={brilloLogo} alt="BrilloPro" style={{ width:130, marginBottom:10 }} />
           <div style={{ fontSize:16, fontWeight:700, color:C.text, marginBottom:4 }}>{t.setup.title}</div>
           <div style={{ fontSize:13, color:C.grayDark }}>{t.setup.subtitle}</div>
         </div>
@@ -771,7 +780,6 @@ function ClientsTab({ t, clients, setClients }) {
         <button onClick={openAdd} style={{ background:C.blue, color:C.white, border:"none", borderRadius:8, padding:"8px 14px", fontWeight:700, cursor:"pointer", fontSize:13 }}>+ {t.clients.addClient}</button>
       </div>
 
-      {/* CSV Import */}
       <div style={{ background:C.black, color:C.white, borderRadius:12, padding:14, marginBottom:14, borderLeft:`5px solid ${C.blue}` }}>
         <div style={{ fontSize:14, fontWeight:800, marginBottom:4 }}>📥 {t.clients.importTitle}</div>
         <div style={{ fontSize:12, color:"rgba(255,255,255,0.85)", marginBottom:10, lineHeight:1.5 }}>{t.clients.importBlurb}</div>
@@ -782,21 +790,15 @@ function ClientsTab({ t, clients, setClients }) {
         </div>
       </div>
 
-      {/* Add/Edit Form */}
       {showForm && (
         <div style={{ background:C.bluePale, borderRadius:12, padding:16, marginBottom:16 }}>
-          {/* Basic info */}
           {[["name",t.clients.name],["phone",t.clients.phone],["address",t.clients.address],["email",t.clients.email]].map(([key,label]) => (
             <input key={key} value={form[key]} onChange={e=>setForm({...form,[key]:e.target.value})} placeholder={label} style={inputStyle} />
           ))}
-
-          {/* Location type */}
           <div style={{ fontSize:13, fontWeight:700, color:C.text, marginBottom:6 }}>🏢 {t.clients.locationType}</div>
           <select value={form.locationType} onChange={e=>setForm({...form,locationType:e.target.value})} style={selectStyle}>
             {t.clients.locationTypes.map(lt => <option key={lt} value={lt}>{lt}</option>)}
           </select>
-
-          {/* Cleaning schedule */}
           <div style={{ fontSize:13, fontWeight:700, color:C.text, marginBottom:6 }}>🗓️ {t.clients.schedule}</div>
           <select value={form.scheduleType} onChange={e=>setForm({...form,scheduleType:e.target.value})} style={selectStyle}>
             <option value="oneTime">{t.clients.oneTime}</option>
@@ -811,56 +813,36 @@ function ClientsTab({ t, clients, setClients }) {
               ))}
             </div>
           )}
-
-          {/* Entry access */}
           <div style={{ fontSize:13, fontWeight:700, color:C.text, marginBottom:6 }}>🔑 {t.clients.access}</div>
           <select value={form.accessType} onChange={e=>setForm({...form,accessType:e.target.value})} style={selectStyle}>
             <option value="">-- Select --</option>
             {t.clients.accessTypes.map(a => <option key={a} value={a}>{a}</option>)}
           </select>
-
-          {/* Lockbox code — PIN protected reveal */}
           {(form.accessType === "Lockbox" || form.accessType === "Caja de Llaves") && (
             <div style={{ background:C.white, borderRadius:8, padding:10, marginBottom:10, border:`1px dashed ${C.blue}` }}>
               <div style={{ fontSize:12, fontWeight:700, color:C.blue, marginBottom:6 }}>📦 {t.clients.lockboxCode}</div>
               <div style={{ display:"flex", gap:8 }}>
-                <input
-                  type={showLockbox ? "text" : "password"}
-                  value={form.lockboxCode}
-                  onChange={e=>setForm({...form,lockboxCode:e.target.value})}
-                  placeholder="0000"
-                  style={{ flex:1, padding:"8px 10px", borderRadius:6, border:`1px solid ${C.grayMid}`, fontSize:14, boxSizing:"border-box" }}
-                />
+                <input type={showLockbox ? "text" : "password"} value={form.lockboxCode} onChange={e=>setForm({...form,lockboxCode:e.target.value})} placeholder="0000" style={{ flex:1, padding:"8px 10px", borderRadius:6, border:`1px solid ${C.grayMid}`, fontSize:14, boxSizing:"border-box" }} />
                 <button onClick={() => setShowLockbox(!showLockbox)} style={{ background:C.blue, color:C.white, border:"none", borderRadius:6, padding:"0 12px", cursor:"pointer", fontSize:13 }}>{showLockbox?"🙈":"👁️"}</button>
               </div>
             </div>
           )}
-
-          {/* Supplies */}
           <div style={{ fontSize:13, fontWeight:700, color:C.text, marginBottom:6 }}>🧹 {t.clients.supplies}</div>
           <select value={form.supplies} onChange={e=>setForm({...form,supplies:e.target.value})} style={selectStyle}>
             <option value="">-- Select --</option>
             {t.clients.suppliesTypes.map(s => <option key={s} value={s}>{s}</option>)}
           </select>
-
-          {/* Pets */}
           <div style={{ fontSize:13, fontWeight:700, color:C.text, marginBottom:6 }}>🐾 {t.clients.pets}</div>
           <select value={form.pets} onChange={e=>setForm({...form,pets:e.target.value})} style={selectStyle}>
             <option value="">-- Select --</option>
             {t.clients.petsTypes.map(p => <option key={p} value={p}>{p}</option>)}
           </select>
-
-          {/* Preferred cleaner */}
           <input value={form.preferredCleaner} onChange={e=>setForm({...form,preferredCleaner:e.target.value})} placeholder={`👤 ${t.clients.preferredCleaner}`} style={inputStyle} />
-
-          {/* Notes */}
           <textarea value={form.notes||""} onChange={e=>setForm({...form,notes:e.target.value})} placeholder="📝 Notes / Notas" rows={3} style={{ ...inputStyle, resize:"vertical" }} />
-
           <button onClick={saveClient} style={{ width:"100%", background:C.blue, color:C.white, border:"none", borderRadius:8, padding:"11px 0", fontWeight:700, cursor:"pointer" }}>{editingId?t.clients.update:t.clients.save}</button>
         </div>
       )}
 
-      {/* Client Cards */}
       {clients.length === 0
         ? <div style={{ textAlign:"center", color:C.grayDark, padding:"40px 16px", fontSize:14 }}>{t.clients.noClients}</div>
         : clients.map(c => (
@@ -871,9 +853,7 @@ function ClientsTab({ t, clients, setClients }) {
             </div>
             <div style={{ color:C.grayDark, fontSize:13, marginBottom:2 }}>{c.phone}</div>
             <div style={{ color:C.grayDark, fontSize:13, marginBottom:4 }}>{c.address}</div>
-            {/* Schedule badge */}
             {scheduleLabel(c) && <div style={{ display:"inline-block", background:C.bluePale, color:C.blue, padding:"3px 8px", borderRadius:6, fontSize:11, fontWeight:700, marginBottom:6 }}>📅 {scheduleLabel(c)}</div>}
-            {/* Access & extras row */}
             <div style={{ display:"flex", gap:6, flexWrap:"wrap", marginBottom:8 }}>
               {c.accessType && <span style={{ fontSize:11, background:"#f0fdf4", color:C.green, padding:"2px 8px", borderRadius:10, fontWeight:600 }}>🔑 {c.accessType}</span>}
               {c.supplies && <span style={{ fontSize:11, background:"#fefce8", color:"#92400e", padding:"2px 8px", borderRadius:10, fontWeight:600 }}>🧹 {c.supplies}</span>}
@@ -1082,9 +1062,11 @@ function EstimatesTab({ t, clients, estimates, setEstimates, invoices, setInvoic
 }
 
 // ─── BILLING TAB ──────────────────────────────────────────────────────────────
-function BillingTab({ t, invoices, estimates, company, setCompany }) {
+function BillingTab({ t, invoices, estimates, company, setCompany, clients, setClients, setInvoices, setEstimates }) {
   const [form, setForm] = useState(company);
   const [showSaved, setShowSaved] = useState(false);
+  const [backupMsg, setBackupMsg] = useState("");
+  const restoreRef = useRef(null);
   useEffect(() => { setForm(company); }, [company]);
 
   const total = invoices.reduce((s,i)=>s+parseFloat(i.total||0),0);
@@ -1104,6 +1086,7 @@ function BillingTab({ t, invoices, estimates, company, setCompany }) {
     invoices.forEach(inv=>{if(inv.lines&&inv.lines.length>0){inv.lines.forEach(l=>{rows.push([l.date||inv.date,inv.client,l.service,parseFloat(l.amount||0).toFixed(2),inv.status,company.companyName||""].map(esc).join(","));});}else{rows.push([inv.date,inv.client,"",parseFloat(inv.total||0).toFixed(2),inv.status,company.companyName||""].map(esc).join(","));}});
     downloadCSV([headers.join(","),...rows].join("\n"),`brillopro-invoices-${new Date().toISOString().split("T")[0]}.csv`);
   };
+
   const exportEstimates = () => {
     if(!estimates||estimates.length===0){alert(t.billing.noData);return;}
     const headers=["Estimate Date","Client","Service","Amount","Status","Notes","Company"];
@@ -1112,9 +1095,48 @@ function BillingTab({ t, invoices, estimates, company, setCompany }) {
     downloadCSV([headers.join(","),...rows].join("\n"),`brillopro-estimates-${new Date().toISOString().split("T")[0]}.csv`);
   };
 
+  // ── BACKUP ──
+  const handleBackup = () => {
+    const data = {
+      version: "1.0",
+      exported: new Date().toISOString(),
+      clients, invoices, estimates, company
+    };
+    const blob = new Blob([JSON.stringify(data, null, 2)], { type:"application/json" });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = `brillopro-backup-${new Date().toISOString().split("T")[0]}.json`;
+    document.body.appendChild(link); link.click(); document.body.removeChild(link);
+    setBackupMsg(t.billing.backupSuccess);
+    setTimeout(() => setBackupMsg(""), 2500);
+  };
+
+  // ── RESTORE ──
+  const handleRestore = (e) => {
+    const file = e.target.files && e.target.files[0]; if (!file) return;
+    const reader = new FileReader();
+    reader.onload = (evt) => {
+      try {
+        const data = JSON.parse(evt.target.result);
+        if (data.clients) setClients(data.clients);
+        if (data.invoices) setInvoices(data.invoices);
+        if (data.estimates) setEstimates(data.estimates);
+        if (data.company) { setCompany(data.company); setForm(data.company); }
+        setBackupMsg(t.billing.restoreSuccess);
+        setTimeout(() => setBackupMsg(""), 2500);
+      } catch(err) {
+        alert(t.billing.restoreError);
+      }
+    };
+    reader.readAsText(file); e.target.value="";
+  };
+
   return (
     <div style={{ padding:16 }}>
       <h2 style={{ margin:"0 0 16px", color:C.blue, fontSize:20, fontWeight:800 }}>{t.billing.title}</h2>
+
+      {/* Stats */}
       <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:12, marginBottom:20 }}>
         {[[t.billing.totalEarned,`$${paid.toFixed(2)}`,C.green],[t.billing.totalPending,`$${pending.toFixed(2)}`,C.orange],[t.billing.thisMonth,`$${thisMonth.toFixed(2)}`,C.blue],["Total Invoices",`${invoices.length}`,C.grayDark]].map(([label,val,color])=>(
           <div key={label} style={{ background:C.white, border:`1px solid ${C.grayMid}`, borderRadius:12, padding:14, textAlign:"center" }}>
@@ -1124,7 +1146,19 @@ function BillingTab({ t, invoices, estimates, company, setCompany }) {
         ))}
       </div>
 
-      {/* Export */}
+      {/* ── BACKUP & RESTORE ── */}
+      <div style={{ background:C.black, color:C.white, borderRadius:12, padding:16, marginBottom:16, borderLeft:`5px solid ${C.green}` }}>
+        <div style={{ fontSize:15, fontWeight:800, marginBottom:6 }}>💾 Data Backup & Restore</div>
+        <div style={{ fontSize:12, color:"rgba(255,255,255,0.8)", marginBottom:14, lineHeight:1.5 }}>
+          Download a full backup of all your clients, invoices, estimates, and settings. Restore it anytime to recover your data.
+        </div>
+        <button onClick={handleBackup} style={{ width:"100%", background:C.green, color:C.white, border:"none", borderRadius:8, padding:"11px 0", fontWeight:700, cursor:"pointer", fontSize:14, marginBottom:8 }}>{t.billing.backup}</button>
+        <button onClick={() => restoreRef.current && restoreRef.current.click()} style={{ width:"100%", background:"transparent", color:C.white, border:`2px solid ${C.green}`, borderRadius:8, padding:"10px 0", fontWeight:700, cursor:"pointer", fontSize:14 }}>{t.billing.restore}</button>
+        <input ref={restoreRef} type="file" accept=".json,application/json" onChange={handleRestore} style={{ display:"none" }} />
+        {backupMsg && <div style={{ textAlign:"center", color:C.green, fontWeight:700, marginTop:10, fontSize:13 }}>{backupMsg}</div>}
+      </div>
+
+      {/* Export CSV */}
       <div style={{ background:C.black, color:C.white, borderRadius:12, padding:16, marginBottom:16, borderLeft:`5px solid ${C.blue}` }}>
         <div style={{ fontSize:15, fontWeight:800, marginBottom:6 }}>📊 {t.billing.exportTitle}</div>
         <div style={{ fontSize:12, color:"rgba(255,255,255,0.85)", marginBottom:14, lineHeight:1.5 }}>{t.billing.exportBlurb}</div>
@@ -1221,7 +1255,7 @@ export default function App() {
     <div style={{ maxWidth:1100, margin:"0 auto", minHeight:"100vh", background:C.gray, fontFamily:"-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif", paddingBottom:80 }}>
       {/* Header */}
       <div style={{ background:C.black, position:"sticky", top:0, zIndex:10, borderBottom:`3px solid ${C.blue}` }}>
-        <img src="./header.png" alt="BrilloPro" style={{ width:"100%", height:"auto", display:"block" }} />
+        <img src={brilloHeader} alt="BrilloPro" style={{ width:"100%", height:"auto", display:"block" }} />
         <div style={{ background:C.black, padding:"6px 12px", display:"flex", justifyContent:"flex-end", alignItems:"center" }}>
           <button onClick={() => setLang(lang==="en"?"es":"en")} style={{ background:"rgba(14,165,233,0.2)", color:C.white, border:`1px solid ${C.blue}`, borderRadius:20, padding:"5px 14px", fontWeight:700, cursor:"pointer", fontSize:12 }}>{t.lang}</button>
         </div>
@@ -1233,7 +1267,7 @@ export default function App() {
         {activeTab === 1 && <ClientsTab t={t} clients={clients} setClients={setClients} />}
         {activeTab === 2 && <InvoicesTab t={t} clients={clients} invoices={invoices} setInvoices={setInvoices} company={company} />}
         {activeTab === 3 && <EstimatesTab t={t} clients={clients} estimates={estimates} setEstimates={setEstimates} invoices={invoices} setInvoices={setInvoices} company={company} />}
-        {activeTab === 4 && <BillingTab t={t} invoices={invoices} estimates={estimates} company={company} setCompany={setCompany} />}
+        {activeTab === 4 && <BillingTab t={t} invoices={invoices} estimates={estimates} company={company} setCompany={setCompany} clients={clients} setClients={setClients} setInvoices={setInvoices} setEstimates={setEstimates} />}
       </div>
 
       {/* Bottom nav */}
