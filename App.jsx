@@ -1,5 +1,5 @@
 import brilloLogo from './logo.png'
-import brilloHeader from './Header.png'
+import brilloHeader from './header.png'
 import React, { useState, useEffect, useRef } from "react";
 
 const SERVICES_EN = ["Standard Clean","Deep Clean","Move-In Clean","Move-Out Clean","Post-Construction Clean","Airbnb / Vacation Rental Turnover","Office Clean","Retail Store Clean","Medical Office Clean","School / Daycare Clean","Restaurant Clean","Warehouse / Facility Clean","Inside Refrigerator","Inside Oven","Inside Cabinets","Interior Windows","Laundry & Folding","Organizing","Carpet Cleaning","Disinfection Service","Garage Clean","Patio / Balcony Clean","Other Service"];
